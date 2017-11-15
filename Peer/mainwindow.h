@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QTextEdit>
 
-#include "Socket.h"
+#include "../Socket.h"
 
 namespace Ui {
 class MainWindow;

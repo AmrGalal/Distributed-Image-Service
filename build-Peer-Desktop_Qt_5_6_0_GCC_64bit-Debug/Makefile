@@ -50,8 +50,8 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../Peer/main.cpp \
 		../Peer/mainwindow.cpp \
-		../Peer/Message.cc \
-		../Peer/Socket.cc moc_mainwindow.cpp
+		../Message.cc \
+		../Socket.cc moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		Message.o \
@@ -192,11 +192,11 @@ DIST          = ../../Qt/5.6/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt/5.6/gcc_64/mkspecs/features/yacc.prf \
 		../../Qt/5.6/gcc_64/mkspecs/features/lex.prf \
 		../Peer/Peer.pro ../Peer/mainwindow.h \
-		../Peer/Message.h \
-		../Peer/Socket.h ../Peer/main.cpp \
+		../Message.h \
+		../Socket.h ../Peer/main.cpp \
 		../Peer/mainwindow.cpp \
-		../Peer/Message.cc \
-		../Peer/Socket.cc
+		../Message.cc \
+		../Socket.cc
 QMAKE_TARGET  = Peer
 DESTDIR       = 
 TARGET        = Peer
@@ -499,8 +499,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../Peer/mainwindow.h ../Peer/Message.h ../Peer/Socket.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Peer/main.cpp ../Peer/mainwindow.cpp ../Peer/Message.cc ../Peer/Socket.cc $(DISTDIR)/
+	$(COPY_FILE) --parents ../Peer/mainwindow.h ../Message.h ../Socket.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Peer/main.cpp ../Peer/mainwindow.cpp ../Message.cc ../Socket.cc $(DISTDIR)/
 	$(COPY_FILE) --parents ../Peer/mainwindow.ui $(DISTDIR)/
 
 
@@ -634,6 +634,17 @@ moc_mainwindow.cpp: ../../Qt/5.6/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt/5.6/gcc_64/include/QtGui/qtouchdevice.h \
 		../../Qt/5.6/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../Qt/5.6/gcc_64/include/QtGui/qicon.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QTextEdit \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qtextedit.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextdocument.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextcursor.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextformat.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qpen.h \
+		../Socket.h \
+		../Message.h \
 		../Peer/mainwindow.h
 	/home/bishoy/Qt/5.6/gcc_64/bin/moc $(DEFINES) -I/home/bishoy/Qt/5.6/gcc_64/mkspecs/linux-g++ -I/home/bishoy/AGASB/Peer -I/home/bishoy/Qt/5.6/gcc_64/include -I/home/bishoy/Qt/5.6/gcc_64/include/QtWidgets -I/home/bishoy/Qt/5.6/gcc_64/include/QtGui -I/home/bishoy/Qt/5.6/gcc_64/include/QtCore -I. ../Peer/mainwindow.h -o moc_mainwindow.cpp
 
@@ -763,6 +774,17 @@ main.o: ../Peer/main.cpp ../Peer/mainwindow.h \
 		../../Qt/5.6/gcc_64/include/QtGui/qtouchdevice.h \
 		../../Qt/5.6/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../Qt/5.6/gcc_64/include/QtGui/qicon.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QTextEdit \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qtextedit.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextdocument.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextcursor.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextformat.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qpen.h \
+		../Socket.h \
+		../Message.h \
 		../../Qt/5.6/gcc_64/include/QtWidgets/QApplication \
 		../../Qt/5.6/gcc_64/include/QtWidgets/qapplication.h \
 		../../Qt/5.6/gcc_64/include/QtCore/qcoreapplication.h \
@@ -880,15 +902,67 @@ mainwindow.o: ../Peer/mainwindow.cpp ../Peer/mainwindow.h \
 		../../Qt/5.6/gcc_64/include/QtGui/qtouchdevice.h \
 		../../Qt/5.6/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../Qt/5.6/gcc_64/include/QtGui/qicon.h \
-		ui_mainwindow.h
+		../../Qt/5.6/gcc_64/include/QtWidgets/QTextEdit \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qtextedit.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qframe.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextdocument.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextcursor.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qtextformat.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qpen.h \
+		../Socket.h \
+		../Message.h \
+		ui_mainwindow.h \
+		../../Qt/5.6/gcc_64/include/QtCore/QVariant \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QAction \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qaction.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qactiongroup.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QApplication \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qapplication.h \
+		../../Qt/5.6/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt/5.6/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qguiapplication.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qinputmethod.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QButtonGroup \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qbuttongroup.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QHeaderView \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qheaderview.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../Qt/5.6/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../Qt/5.6/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../Qt/5.6/gcc_64/include/QtGui/qvalidator.h \
+		../../Qt/5.6/gcc_64/include/QtCore/qregularexpression.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qslider.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qstyle.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qtabbar.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qrubberband.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QLabel \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qlabel.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QMenuBar \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qmenubar.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qmenu.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QPushButton \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qpushbutton.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qabstractbutton.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QStatusBar \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qstatusbar.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QToolBar \
+		../../Qt/5.6/gcc_64/include/QtWidgets/qtoolbar.h \
+		../../Qt/5.6/gcc_64/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Peer/mainwindow.cpp
 
-Message.o: ../Peer/Message.cc ../Peer/Message.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Message.o ../Peer/Message.cc
+Message.o: ../Message.cc ../Message.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Message.o ../Message.cc
 
-Socket.o: ../Peer/Socket.cc ../Peer/Socket.h \
-		../Peer/Message.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Socket.o ../Peer/Socket.cc
+Socket.o: ../Socket.cc ../Socket.h \
+		../Message.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Socket.o ../Socket.cc
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
