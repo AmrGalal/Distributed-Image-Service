@@ -29,9 +29,11 @@ private:
     string image_partition_content;
     int image_partition_index;
     static string serialize_int(const int32_t i);
-    static int deserialize_int(const char * serialized_int);
+    static int deserialize_int(const char * &serialized_int);
     static string prepend_length(const string & s);
-    static string read_length_prepended_string(const char * s);
+    static string read_length_prepended_string(const char * & s);
+    // Maximum string length!
+    const static int MAX_STR_LEN = 1 << 13;
 public:
     // Message();
     Message (RPCId _rpc_id);

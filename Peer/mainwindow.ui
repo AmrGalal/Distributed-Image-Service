@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>506</width>
-    <height>343</height>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="sign_up_push_button">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>160</y>
+      <x>350</x>
+      <y>60</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QPushButton" name="sign_in_push_button">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>190</y>
+      <x>350</x>
+      <y>100</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -43,40 +43,33 @@
    <widget class="QTextEdit" name="password_text_edit">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>190</y>
-      <width>121</width>
+      <x>170</x>
+      <y>100</y>
+      <width>171</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Password</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="local_port_text_edit">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>20</x>
       <y>20</y>
       <width>121</width>
       <height>31</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QLabel" name="local_port_label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>71</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
+    <property name="placeholderText">
      <string>Local Port</string>
     </property>
    </widget>
    <widget class="QPushButton" name="bind_push_button">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>160</x>
       <y>20</y>
       <width>99</width>
       <height>27</height>
@@ -89,83 +82,53 @@
    <widget class="QTextEdit" name="username_text_edit">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>150</y>
-      <width>121</width>
+      <x>170</x>
+      <y>60</y>
+      <width>171</width>
       <height>31</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>160</y>
-      <width>71</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
+    <property name="placeholderText">
      <string>Username</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>200</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Password</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="server_ip_address_label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>70</y>
-      <width>131</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Server IP Address</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="server_port_label">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>121</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Server Port</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="server_ip_address_text_edit">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>20</x>
       <y>60</y>
       <width>104</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="placeholderText">
+     <string>Server IP</string>
+    </property>
    </widget>
    <widget class="QTextEdit" name="server_port_text_edit">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>20</x>
       <y>100</y>
       <width>104</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Server Port</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="sign_out_push_button">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>80</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sign Out</string>
     </property>
    </widget>
   </widget>

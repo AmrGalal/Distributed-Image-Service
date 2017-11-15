@@ -25,12 +25,23 @@ private slots:
 
     void on_sign_in_push_button_clicked();
 
+    void on_sign_out_push_button_clicked();
+
 private:
+    void set_bind_widgets_visibility(bool visibility);
+    void set_sign_in_widgets_visibility(bool visibility);
+    void set_sign_out_widgets_visibility(bool visibility);
+    void set_send_widgets_visibility(bool visibility);
+
+    string get_string_from_text_edit(QTextEdit * text_edit);
+    string get_server_ip_address();
+    int get_server_port();
+
     Ui::MainWindow *ui;
     Socket *socket;
     bool socket_bound = false;
-    void set_sign_up_widgets_visibility(bool visibility);
-    string get_string_from_text_edit(QTextEdit * text_edit);
+    bool signed_in = false;
+    string signed_in_username = "";
 };
 
 #endif // MAINWINDOW_H
