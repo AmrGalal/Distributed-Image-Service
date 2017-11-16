@@ -23,17 +23,21 @@ Message::Message (const char * _marshalled_message)
     {
     case SignUpRequest:
     case SignInRequest:
-        this->setUsername(read_length_prepended_string(_marshalled_message));
-        this->setPassword(read_length_prepended_string(_marshalled_message));
+        this->setUsername(Message::read_length_prepended_string(_marshalled_message));
+        this->setPassword(Message::read_length_prepended_string(_marshalled_message));
         break;
     case SignUpConfirmation:
     case SignInConfirmation:
         break;
     case SignOutRequest:
-        this->setUsername(read_length_prepended_string(_marshalled_message));
+        this->setUsername(Message::read_length_prepended_string(_marshalled_message));
         break;
+    case ImageChunk:
+        this->setImageId(Message::read_length_prepended_string(_marshalled_message));
+        this->setImageChunkIndex(Message::deserialize_int(_marshalled_message));
+        this->setImageChunkContent(Message::read_length_prepended_string(_marshalled_message));
     case Error:
-        this->setErrorMessage(read_length_prepended_string(_marshalled_message));
+        this->setErrorMessage(Message::read_length_prepended_string(_marshalled_message));
         break;
     default: throw std::runtime_error("RPCId not supported for marshalling!");
     }
@@ -56,12 +60,62 @@ string Message::marshal () const
     case Error:
         ans = ans + Message::prepend_length(this->getErrorMessage());
         break;
+    case ImageChunk:
+        ans = ans +
+                Message::prepend_length(this->getImageId()) +
+                Message::serialize_int(this->getImageChunkIndex()) +
+                Message::prepend_length(this->getImageChunkContent());
     default:
         throw std::runtime_error("RPCId not supported for marshalling!");
     }
     return ans;
 }
 
+
+// Setters
+void Message::setUsername(const string & _username){
+    this->username = _username;
+}
+void Message::setPassword(const string & _password){
+    this->password = _password;
+}
+void Message::setErrorMessage(const string & _error_message){
+    this->error_message = _error_message;
+}
+void Message::setImageId(const string &_image_id){
+    this->image_id = _image_id;
+}
+void Message::setImageChunkContent(const string & _image_partition_content){
+    this->image_chunk_content = _image_partition_content;
+}
+void Message::setImageChunkIndex(const int32_t _image_partition_index){
+    this->image_chunk_index = _image_partition_index;
+}
+
+// Getters
+RPCId Message::getRPCId() const{
+    return this->rpc_id;
+}
+string Message::getUsername() const{
+    return this->username;
+}
+string Message::getPassword() const{
+    return this->password;
+}
+string Message::getErrorMessage() const{
+    return this->error_message;
+}
+string Message::getImageId() const{
+    return this->image_id;
+}
+string Message::getImageChunkContent() const{
+    return this->image_chunk_content;
+}
+int32_t Message::getImageChunkIndex() const{
+    return this->image_chunk_index;
+}
+
+// Serialization auxiliary functions!
 string Message::serialize_int(int32_t i)
 {
     string ans = "";
@@ -103,42 +157,4 @@ string Message::read_length_prepended_string(const char * & s)
     while(length--)
         ans += string(1, *s++);
     return ans;
-}
-
-
-// Setters
-void Message::setUsername(const string & _username){
-    this->username = _username;
-}
-void Message::setPassword(const string & _password){
-    this->password = _password;
-}
-void Message::setErrorMessage(const string & _error_message){
-    this->error_message = _error_message;
-}
-void Message::setImagePartitionContent(const string & _image_partition_content){
-    this->image_partition_content = _image_partition_content;
-}
-void Message::setImagePartitionIndex(const int32_t _image_partition_index){
-    this->image_partition_index = _image_partition_index;
-}
-
-// Getters
-RPCId Message::getRPCId() const{
-    return this->rpc_id;
-}
-string Message::getUsername() const{
-    return this->username;
-}
-string Message::getPassword() const{
-    return this->password;
-}
-string Message::getErrorMessage() const{
-    return this->error_message;
-}
-string Message::getImagePartitionContent() const{
-    return this->image_partition_content;
-}
-int32_t Message::getImagePartitionIndex() const{
-    return this->image_partition_index;
 }

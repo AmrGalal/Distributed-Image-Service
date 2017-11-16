@@ -14,7 +14,9 @@ enum RPCId : int32_t {
     SignInConfirmation,
     SignOutRequest,
     // Generic Error!
-    Error
+    Error,
+    // Image
+    ImageChunk
 };
 
 class Message
@@ -28,9 +30,13 @@ private:
     // Fields related to message content.
     string username;
     string password;
+
     string error_message;
-    string image_partition_content;
-    int32_t image_partition_index;
+
+    string image_id;
+    string image_chunk_content;
+    int32_t image_chunk_index;
+    // Serialization!
     static string serialize_int(const int32_t i);
     static int32_t deserialize_int(const char * &serialized_int);
     static string prepend_length(const string & _str, const bool _strict = true);
@@ -45,14 +51,16 @@ public:
     void setUsername(const string & _username);
     void setPassword(const string & _password);
     void setErrorMessage(const string & _error_message);
-    void setImagePartitionContent(const string & _image_partition_content);
-    void setImagePartitionIndex(const int32_t _image_partition_index);
+    void setImageId(const string & _image_id);
+    void setImageChunkContent(const string & _image_partition_content);
+    void setImageChunkIndex(const int32_t _image_partition_index);
     // Getters
     RPCId getRPCId() const;
     string getUsername() const;
     string getPassword() const;
     string getErrorMessage() const;
-    string getImagePartitionContent() const;
-    int32_t getImagePartitionIndex() const;
+    string getImageId() const;
+    string getImageChunkContent() const;
+    int32_t getImageChunkIndex() const;
 };
 #endif // MESSAGE_H

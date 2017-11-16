@@ -204,6 +204,7 @@ void MainWindow::read_users()
     users_file.close();
     this->log("Successfully read " + std::to_string(this->users.size())  + " users information from file!");
 }
+
 void MainWindow::save_users()
 {
     std::ofstream users_file;
