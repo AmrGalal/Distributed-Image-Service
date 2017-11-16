@@ -40,32 +40,6 @@
      <string>Sign In</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="password_text_edit">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>100</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Password</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="local_port_text_edit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Local Port</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="bind_push_button">
     <property name="geometry">
      <rect>
@@ -77,45 +51,6 @@
     </property>
     <property name="text">
      <string>Bind</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="username_text_edit">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>60</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Username</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="server_ip_address_text_edit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>60</y>
-      <width>104</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Server IP</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="server_port_text_edit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>104</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="placeholderText">
-     <string>Server Port</string>
     </property>
    </widget>
    <widget class="QPushButton" name="sign_out_push_button">
@@ -131,6 +66,71 @@
      <string>Sign Out</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="local_port_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Local Port</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="server_ip_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Server IP</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="server_port_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>100</y>
+      <width>113</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Server Port</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="username_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>60</y>
+      <width>171</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Username</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="password_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>100</y>
+      <width>171</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Password</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -138,7 +138,7 @@
      <x>0</x>
      <y>0</y>
      <width>506</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

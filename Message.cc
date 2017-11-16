@@ -23,15 +23,17 @@ Message::Message (const char * _marshalled_message)
     {
     case SignUpRequest:
     case SignInRequest:
-        this->username = read_length_prepended_string(_marshalled_message);
-        this->password = read_length_prepended_string(_marshalled_message);
+        this->setUsername(read_length_prepended_string(_marshalled_message));
+        this->setPassword(read_length_prepended_string(_marshalled_message));
         break;
     case SignUpConfirmation:
     case SignInConfirmation:
-        this->username = read_length_prepended_string(_marshalled_message);
+        break;
+    case SignOutRequest:
+        this->setUsername(read_length_prepended_string(_marshalled_message));
         break;
     case Error:
-        this->error_message = read_length_prepended_string(_marshalled_message);
+        this->setErrorMessage(read_length_prepended_string(_marshalled_message));
         break;
     default: throw std::runtime_error("RPCId not supported for marshalling!");
     }
@@ -43,13 +45,19 @@ string Message::marshal () const
     {
     case SignUpRequest:
     case SignInRequest:
-        ans = ans + Message::prepend_length(this->username) + Message::prepend_length(this->password); break;
+        ans = ans + Message::prepend_length(this->getUsername()) + Message::prepend_length(this->getPassword());
+        break;
     case SignUpConfirmation:
     case SignInConfirmation:
-        ans = ans + Message::prepend_length(this->username); break;
+        break;
+    case SignOutRequest:
+        ans = ans + Message::prepend_length(this->getUsername());
+        break;
     case Error:
-        ans = ans + Message::prepend_length(this->error_message); break;
-    default: throw std::runtime_error("RPCId not supported for marshalling!");
+        ans = ans + Message::prepend_length(this->getErrorMessage());
+        break;
+    default:
+        throw std::runtime_error("RPCId not supported for marshalling!");
     }
     return ans;
 }
@@ -75,17 +83,21 @@ int32_t Message::deserialize_int(const char * & serialized_int)
     }
     return ntohl(x);
 }
-string Message::prepend_length(const string & s)
+string Message::prepend_length(const string & _str, const bool _strict)
 {
-    return Message::serialize_int(s.length()) + s;
+    if (_strict && _str.empty())
+    {
+        throw std::runtime_error("Attempting to serialize an empty string!");
+    }
+    return Message::serialize_int(_str.length()) + _str;
 }
 string Message::read_length_prepended_string(const char * & s)
 {
-    int length = Message::deserialize_int(s);
-    if (length > Message::MAX_STR_LEN)
+    int32_t length = Message::deserialize_int(s);
+    if (length > Message::MAX_STR_LEN || length <= 0)
     {
         throw std::runtime_error(
-                    "Error parsing received message: invalid string length!");
+                    "Error parsing received message: Invalid string length: " + std::to_string(length));
     }
     string ans = "";
     while(length--)
@@ -107,7 +119,7 @@ void Message::setErrorMessage(const string & _error_message){
 void Message::setImagePartitionContent(const string & _image_partition_content){
     this->image_partition_content = _image_partition_content;
 }
-void Message::setImagePartitionIndex(const int _image_partition_index){
+void Message::setImagePartitionIndex(const int32_t _image_partition_index){
     this->image_partition_index = _image_partition_index;
 }
 
@@ -127,6 +139,6 @@ string Message::getErrorMessage() const{
 string Message::getImagePartitionContent() const{
     return this->image_partition_content;
 }
-int Message::getImagePartitionIndex() const{
+int32_t Message::getImagePartitionIndex() const{
     return this->image_partition_index;
 }

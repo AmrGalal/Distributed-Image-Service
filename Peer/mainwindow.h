@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTextEdit>
+#include <QLineEdit>
 
 #include "../Socket.h"
 
@@ -28,20 +28,29 @@ private slots:
     void on_sign_out_push_button_clicked();
 
 private:
-    void set_bind_widgets_visibility(bool visibility);
-    void set_sign_in_widgets_visibility(bool visibility);
-    void set_sign_out_widgets_visibility(bool visibility);
-    void set_send_widgets_visibility(bool visibility);
+    // Visibility!
+    void set_widgets_visibility(const vector<QWidget*> _widgets, const bool _visibility);
+    void set_bind_widgets_visibility(const bool _visibility);
+    void set_sign_in_widgets_visibility(const bool _visibility);
+    void set_sign_out_widgets_visibility(const bool _visibility);
+    void set_send_widgets_visibility(const bool _visibility);
 
-    string get_string_from_text_edit(QTextEdit * text_edit);
-    string get_server_ip_address();
-    int get_server_port();
+    // Auxiliary functions!
+    string get_string_from_line_edit(const QLineEdit * _line_edit, const bool _strict = true);
+    void show_message_box(const string & _message_content, const string & _title = "Information");
 
+    // GUI!
     Ui::MainWindow *ui;
-    Socket *socket;
-    bool socket_bound = false;
+
+    // My socket!
+    Socket* socket;
+    // Sign in, sign out and bind!
+    void sign_in(const string & _username, const string & _server_ip, const int _server_port);
+    void sign_out();
     bool signed_in = false;
-    string signed_in_username = "";
+    string username = "";
+    string server_ip;
+    int server_port;
 };
 
 #endif // MAINWINDOW_H

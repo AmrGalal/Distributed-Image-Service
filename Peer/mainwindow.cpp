@@ -3,17 +3,22 @@
  * - Forever-blocking receive!
  */
 
+#include <chrono>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 #include "QMessageBox"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../Message.h"
 
+// Construction!
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    srand(time(0));
     ui->setupUi(this);
     this->set_bind_widgets_visibility(true);
     this->set_sign_in_widgets_visibility(false);
@@ -23,120 +28,188 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete this->ui;
+    delete this->socket;
 }
 
-string MainWindow::get_server_ip_address()
+// Auxiliary funcions!
+string MainWindow::get_string_from_line_edit(const QLineEdit * _line_edit, const bool _strict)
 {
-    return get_string_from_text_edit(ui->server_ip_address_text_edit).c_str();
+/* Args:
+ * line_edit: LineEdit Object to retrieve text from.
+ * strict: If true, the LineEdit object must be nonempty.
+ */
+    string ans = _line_edit->text().toStdString();
+    if (_strict && ans.empty())
+    {
+        throw std::runtime_error("Unexpected empty LineEdit! Did you forget to fill in some needed information?");
+    }
+    return ans;
 }
 
-int MainWindow::get_server_port()
+void MainWindow::show_message_box(const string & message_content, const string & title)
 {
-    return atoi(get_string_from_text_edit(ui->server_port_text_edit).c_str());
+    QMessageBox::information(
+                this,
+                QString::fromStdString(title),
+                QString::fromStdString(message_content));
 }
 
-void MainWindow::set_sign_in_widgets_visibility(bool visibility)
+// Visibility modifiers!
+void MainWindow::set_widgets_visibility(const vector<QWidget*> _widgets, const bool _visibility)
 {
-    ui->sign_in_push_button->setVisible(visibility);
-    ui->sign_up_push_button->setVisible(visibility);
-    ui->username_text_edit->setVisible(visibility);
-    ui->password_text_edit->setVisible(visibility);
-    ui->server_ip_address_text_edit->setVisible(visibility);
-    ui->server_port_text_edit->setVisible(visibility);
+    for (auto widget : _widgets)
+    {
+        widget->setVisible(_visibility);
+    }
 }
 
-void MainWindow::set_bind_widgets_visibility(bool visibility)
+void MainWindow::set_sign_in_widgets_visibility(const bool _visibility)
 {
-    ui->bind_push_button->setVisible(visibility);
+    this->set_widgets_visibility(
+    {
+                    ui->sign_in_push_button,
+                    ui->sign_up_push_button,
+                    ui->username_line_edit,
+                    ui->password_line_edit,
+                    ui->server_ip_line_edit,
+                    ui->server_port_line_edit
+                },
+                _visibility);
 }
-void MainWindow::set_sign_out_widgets_visibility(bool visibility)
+
+void MainWindow::set_bind_widgets_visibility(const bool _visibility)
 {
-    ui->sign_out_push_button->setVisible(visibility);
+    this->set_widgets_visibility(
+    {
+                    ui->bind_push_button,
+                    ui->local_port_line_edit
+                },
+                _visibility);
 }
-void MainWindow::set_send_widgets_visibility(bool visibility)
+
+void MainWindow::set_sign_out_widgets_visibility(bool _visibility)
+{
+    this->set_widgets_visibility(
+    {
+                    ui->sign_out_push_button
+                },
+                _visibility);
+}
+
+void MainWindow::set_send_widgets_visibility(bool _visibility)
 {
 }
 
+// Events!
+void MainWindow::on_bind_push_button_clicked()
+{
+    const int local_port_number = atoi(get_string_from_line_edit(ui->local_port_line_edit).c_str());
+    try {
+        this->socket = new Socket(local_port_number);
+    }
+    catch (const exception & e)
+    {
+        this->show_message_box(e.what());
+        return;
+    }
+    this->set_bind_widgets_visibility(false);
+    this->set_sign_in_widgets_visibility(true);
+    this->show_message_box("Bind successful!");
+}
 
 void MainWindow::on_sign_up_push_button_clicked()
 {
     Message sign_up_request(SignUpRequest);
-    sign_up_request.setUsername(get_string_from_text_edit(ui->username_text_edit));
-    sign_up_request.setPassword(get_string_from_text_edit(ui->password_text_edit));
-    this->socket->send(
-                sign_up_request,
-                get_server_ip_address().c_str(),
-                get_server_port());
+    const string username = get_string_from_line_edit(ui->username_line_edit);
+    const string password = get_string_from_line_edit(ui->password_line_edit);
+    const string server_ip = get_string_from_line_edit(ui->server_ip_line_edit);
+    const int server_port = atoi(get_string_from_line_edit(ui->server_port_line_edit).c_str());
+    sign_up_request.setUsername(username);
+    sign_up_request.setPassword(password);
+    this->socket->send(sign_up_request, server_ip.c_str(), server_port);
 
-    Message * response;
+    Message reply(Error);
     sockaddr_in address;
-    this->socket->receive(*response, address);
+    this->socket->receive(reply, address);
 
-    switch(response->getRPCId())
+    switch(reply.getRPCId())
     {
     case SignUpConfirmation:
-        QMessageBox::information(
-                    this,
-                    QString::fromStdString("Sign up successful!"),
-                    QString::fromStdString("You can now sign in to use the service!"));
+        this->show_message_box("Sign Up Successful!");
         break;
     case Error:
-        QMessageBox::information(
-                    this,
-                    QString::fromStdString("Sign up failed!"),
-                    QString::fromStdString("Authentication error: " + response->getErrorMessage()));
+        this->show_message_box("Authentication error: " + reply.getErrorMessage());
+        break;
+     default:
+        this->show_message_box("Unexpected message received!");
         break;
     }
 }
 
-string MainWindow::get_string_from_text_edit(QTextEdit * text_edit)
-{
-    return text_edit->toPlainText().toStdString();
-}
-
-void MainWindow::on_bind_push_button_clicked()
-{
-    int local_port_number = atoi(get_string_from_text_edit(ui->local_port_text_edit).c_str());
-    this->socket = new Socket(local_port_number);
-    this->set_bind_widgets_visibility(false);
-    this->set_sign_in_widgets_visibility(true);
-}
-
 void MainWindow::on_sign_in_push_button_clicked()
 {
-    Message sign_in_request(SignInRequest);
-    sign_in_request.setUsername(get_string_from_text_edit(ui->username_text_edit));
-    sign_in_request.setPassword(get_string_from_text_edit(ui->password_text_edit));
-    this->socket->send(
-                sign_in_request,
-                get_server_ip_address().c_str(),
-                get_server_port());
+    // Get sign-in information from widgets!
+    const string username = get_string_from_line_edit(ui->username_line_edit);
+    const string password = get_string_from_line_edit(ui->password_line_edit);
+    const string server_ip = get_string_from_line_edit(ui->server_ip_line_edit);
+    const int server_port = atoi(get_string_from_line_edit(ui->server_port_line_edit).c_str());
 
-    Message * response;
+    // Request sign-in!
+    Message sign_in_request(SignInRequest);
+    sign_in_request.setUsername(username);
+    sign_in_request.setPassword(password);
+    this->socket->send(sign_in_request, server_ip.c_str(), server_port);
+
+    // Wait for reply!
+    Message reply(Error);
     sockaddr_in address;
-    this->socket->receive(*response, address);
-    switch(response->getRPCId())
+    this->socket->receive(reply, address);
+    switch(reply.getRPCId())
     {
     case SignInConfirmation:
-        QMessageBox::information(
-                    this,
-                    QString::fromStdString("Sign in successful!"),
-                    QString::fromStdString("You can now use the service!"));
-        this->signed_in = true;
-        this->set_send_widgets_visibility(true);
+        sign_in(username, server_ip, server_port);
         break;
     case Error:
-        QMessageBox::information(
-                    this,
-                    QString::fromStdString("Sign in failed!"),
-                    QString::fromStdString("Authentication error: " + response->getErrorMessage()));
+        this->show_message_box("Authentication error: " + reply.getErrorMessage());
+        break;
+    default:
+        this->show_message_box("Unexpected message received!");
         break;
     }
 }
 
 void MainWindow::on_sign_out_push_button_clicked()
 {
+    Message sign_out_request(SignOutRequest);
+    sign_out_request.setUsername(this->username);
+    this->socket->send(
+                sign_out_request,
+                this->server_ip.c_str(),
+                this->server_port);
+    sign_out();
+}
+
+// Sign-in, sing-out and bind!
+void MainWindow::sign_in(const string & _username, const string & _server_ip, const int _server_port)
+{
+    this->signed_in = true;
+    this->username = _username;
+    this->server_ip = _server_ip;
+    this->server_port = _server_port;
+    this->set_sign_in_widgets_visibility(false);
+    this->set_send_widgets_visibility(true);
+    this->set_sign_out_widgets_visibility(true);
+    this->show_message_box("Sign in successful!");
+}
+
+void MainWindow::sign_out(){
     this->signed_in = false;
-    this->signed_in_username = "";
+    this->username = "";
+    this->server_ip = "";
+    this->server_port = 0;
+    this->set_sign_out_widgets_visibility(false);
+    this->set_send_widgets_visibility(false);
+    this->set_sign_in_widgets_visibility(true);
+    this->show_message_box("Sign out successful!");
 }
