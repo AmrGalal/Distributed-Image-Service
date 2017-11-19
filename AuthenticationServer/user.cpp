@@ -13,7 +13,7 @@ User::User(const std::string & _username,
     this->password = _password;
     this->ip = _ip;
     this->port = _port;
-    this->is_signed_in = _is_signed_in;
+    this->signed_in_flag = _is_signed_in;
 }
 User::User(const std::string & _serialized_user)
 {
@@ -29,7 +29,7 @@ User::User(const std::string & _serialized_user)
     this->password = info[1];
     this->ip = info[2];
     this->port = atoi(info[3].c_str());
-    this->is_signed_in = (bool) atoi(info[4].c_str());
+    this->signed_in_flag = (bool) atoi(info[4].c_str());
 }
 
 // Serialization
@@ -40,7 +40,7 @@ std::string User::serialize()
         this->password,
         this->ip,
         std::to_string(this->port),
-        std::to_string(this->is_signed_in)
+        std::to_string(this->signed_in_flag)
     };
     std::string ans = "";
     for (auto field : info)
@@ -54,35 +54,31 @@ std::string User::serialize()
 // Sign in and sign out.
 void User::sign_in()
 {
-    this->is_signed_in = true;
+    this->signed_in_flag = true;
 }
 void User::sign_out()
 {
-    this->is_signed_in = false;
+    this->signed_in_flag = false;
 }
 
 // Setters and Getters!
-std::string User::getUsername() const
+std::string User::get_username() const
 {
     return this->username;
 }
-bool User::isCorrectPassword(const std::string & _password) const
+bool User::is_correct_password(const std::string & _password) const
 {
     return this->password == _password;
 }
-std::string User::getIP() const
+std::string User::get_ip() const
 {
     return this->ip;
 }
-int User::getPort() const
+int User::get_port() const
 {
     return this->port;
 }
-bool User::isSignedIn() const
+bool User::is_signed_in() const
 {
-    return this->is_signed_in;
-}
-bool User::operator < (const User & _other) const
-{
-    return this->getUsername() < _other.getUsername();
+    return this->signed_in_flag;
 }

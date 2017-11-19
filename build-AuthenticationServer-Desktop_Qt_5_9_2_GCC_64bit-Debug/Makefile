@@ -52,14 +52,14 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../AuthenticationServer/main.cpp \
 		../AuthenticationServer/mainwindow.cpp \
-		../Message.cc \
-		../Socket.cc \
-		../AuthenticationServer/user.cpp moc_mainwindow.cpp
+		../AuthenticationServer/user.cpp \
+		../message.cc \
+		../socket.cc moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
-		Message.o \
-		Socket.o \
 		user.o \
+		message.o \
+		socket.o \
 		moc_mainwindow.o
 DIST          = ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/common/unix.conf \
@@ -221,7 +221,6 @@ DIST          = ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/qt_config.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_post.prf \
-		../AuthenticationServer/.qmake.stash \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/toolchain.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -242,13 +241,13 @@ DIST          = ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/yacc.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/lex.prf \
 		../AuthenticationServer/AuthenticationServer.pro ../AuthenticationServer/mainwindow.h \
-		../Message.h \
-		../Socket.h \
-		../AuthenticationServer/user.h ../AuthenticationServer/main.cpp \
+		../AuthenticationServer/user.h \
+		../message.h \
+		../socket.h ../AuthenticationServer/main.cpp \
 		../AuthenticationServer/mainwindow.cpp \
-		../Message.cc \
-		../Socket.cc \
-		../AuthenticationServer/user.cpp
+		../AuthenticationServer/user.cpp \
+		../message.cc \
+		../socket.cc
 QMAKE_TARGET  = AuthenticationServer
 DESTDIR       = 
 TARGET        = AuthenticationServer
@@ -420,7 +419,6 @@ Makefile: ../AuthenticationServer/AuthenticationServer.pro ../../Qt_5.9/5.9.2/gc
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/qt_config.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/toolchain.prf \
 		../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -605,7 +603,6 @@ Makefile: ../AuthenticationServer/AuthenticationServer.pro ../../Qt_5.9/5.9.2/gc
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/qt_config.prf:
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/spec_post.prf:
-.qmake.stash:
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/toolchain.prf:
 ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/default_pre.prf:
@@ -644,8 +641,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../Qt_5.9/5.9.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../AuthenticationServer/mainwindow.h ../Message.h ../Socket.h ../AuthenticationServer/user.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../AuthenticationServer/main.cpp ../AuthenticationServer/mainwindow.cpp ../Message.cc ../Socket.cc ../AuthenticationServer/user.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../AuthenticationServer/mainwindow.h ../AuthenticationServer/user.h ../message.h ../socket.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../AuthenticationServer/main.cpp ../AuthenticationServer/mainwindow.cpp ../AuthenticationServer/user.cpp ../message.cc ../socket.cc $(DISTDIR)/
 	$(COPY_FILE) --parents ../AuthenticationServer/mainwindow.ui $(DISTDIR)/
 
 
@@ -792,8 +789,6 @@ moc_mainwindow.cpp: ../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qpen.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtextoption.h \
 		../AuthenticationServer/user.h \
-		../Socket.h \
-		../Message.h \
 		../AuthenticationServer/mainwindow.h \
 		moc_predefs.h \
 		../../Qt_5.9/5.9.2/gcc_64/bin/moc
@@ -930,8 +925,6 @@ main.o: ../AuthenticationServer/main.cpp ../AuthenticationServer/mainwindow.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qpen.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtextoption.h \
 		../AuthenticationServer/user.h \
-		../Socket.h \
-		../Message.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QApplication \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qapplication.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qcoreapplication.h \
@@ -941,9 +934,8 @@ main.o: ../AuthenticationServer/main.cpp ../AuthenticationServer/mainwindow.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qinputmethod.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../AuthenticationServer/main.cpp
 
-mainwindow.o: ../AuthenticationServer/mainwindow.cpp ../AuthenticationServer/mainwindow.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMainWindow \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmainwindow.h \
+mainwindow.o: ../AuthenticationServer/mainwindow.cpp ../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMessageBox \
+		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmessagebox.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtguiglobal.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qglobal.h \
@@ -969,6 +961,7 @@ mainwindow.o: ../AuthenticationServer/mainwindow.cpp ../AuthenticationServer/mai
 		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qversiontagging.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtgui-config.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qdialog.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qwidget.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qwindowdefs.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qobjectdefs.h \
@@ -1043,6 +1036,9 @@ mainwindow.o: ../AuthenticationServer/mainwindow.cpp ../AuthenticationServer/mai
 		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qfiledevice.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qvector2d.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtouchdevice.h \
+		../AuthenticationServer/mainwindow.h \
+		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMainWindow \
+		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmainwindow.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qicon.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QLineEdit \
@@ -1053,63 +1049,18 @@ mainwindow.o: ../AuthenticationServer/mainwindow.cpp ../AuthenticationServer/mai
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qpen.h \
 		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qtextoption.h \
 		../AuthenticationServer/user.h \
-		../Socket.h \
-		../Message.h \
-		ui_mainwindow.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/QVariant \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QAction \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qaction.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qactiongroup.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QApplication \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qapplication.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qcoreapplication.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qeventloop.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qguiapplication.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qinputmethod.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QButtonGroup \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qbuttongroup.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QHeaderView \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qheaderview.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractitemview.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qabstractitemmodel.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qitemselectionmodel.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qstyleoption.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtGui/qvalidator.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtCore/qregularexpression.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qslider.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractslider.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qstyle.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qtabbar.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qrubberband.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMenuBar \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmenubar.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmenu.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QPushButton \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qpushbutton.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qabstractbutton.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QStatusBar \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qstatusbar.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QToolBar \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qtoolbar.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QWidget \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/QMessageBox \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../Qt_5.9/5.9.2/gcc_64/include/QtWidgets/qdialog.h
+		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../AuthenticationServer/mainwindow.cpp
-
-Message.o: ../Message.cc ../Message.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Message.o ../Message.cc
-
-Socket.o: ../Socket.cc ../Socket.h \
-		../Message.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Socket.o ../Socket.cc
 
 user.o: ../AuthenticationServer/user.cpp ../AuthenticationServer/user.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o user.o ../AuthenticationServer/user.cpp
+
+message.o: ../message.cc ../message.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o message.o ../message.cc
+
+socket.o: ../socket.cc ../socket.h \
+		../message.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o socket.o ../socket.cc
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

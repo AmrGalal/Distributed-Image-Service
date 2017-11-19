@@ -9,7 +9,8 @@
 #include <QLineEdit>
 
 #include "user.h"
-#include "../Socket.h"
+#include "../socket.h"
+#include "../message.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,15 +41,15 @@ private:
     void set_exit_widgets_visibility(const bool _visibility);
 
     // Auxiliary functions!
-    string get_string_from_line_edit(const QLineEdit * _text_edit, const bool _strict = true);
+    static string get_string_from_line_edit(const QLineEdit * _text_edit, const bool _strict = true);
     void show_message_box(const string & _message_content, const string & _title = "Information");
     void log(const string & _log_message);
 
     // Serve
-    void serve();
+    void listen();
     void save_users();
     void read_users();
-    std::future<void> serving_thread;
+    std::future<void> listening_thread;
     std::map<std::string, User> users;
     std::mutex users_mutex;
 

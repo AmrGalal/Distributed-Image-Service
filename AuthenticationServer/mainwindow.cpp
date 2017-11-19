@@ -121,22 +121,22 @@ void MainWindow::on_bind_push_button_clicked()
     this->show_message_box("Bind successful!");
 }
 
-void MainWindow::serve()
+void MainWindow::listen()
 {
     while(true)
     {
-        Message request(Error);
-        sockaddr_in address;
-        this->socket->receive(request, address);
+        const auto received = this->socket->receive();
+        const auto & request = received.first;
+        const auto & address = received.second;
         this->users_mutex.lock();
         const string user_ip = std::string(inet_ntoa(address.sin_addr));
         const int user_port = ntohs(address.sin_port);
         Message * reply;
-        switch(request.getRPCId())
+        switch(request.get_rpc_id())
         {
         case SignUpRequest:
         {
-            const string username = request.getUsername(), password = request.getPassword();
+            const string username = request.get_username(), password = request.get_password();
             if (!this->users.insert(
                         make_pair(
                             username,
@@ -144,7 +144,7 @@ void MainWindow::serve()
                             )).second)
             {
                 reply = new Message(Error);
-                reply->setErrorMessage("Username already exists!");
+                reply->set_error_message("Username already exists!");
                 this->log("Useranme: " + username + " already exists!");
             }
             else
@@ -156,18 +156,18 @@ void MainWindow::serve()
             break;
         case SignInRequest:
         {
-            const string username = request.getUsername(), password = request.getPassword();
+            const string username = request.get_username(), password = request.get_password();
             auto iter = this->users.find(username);
             if (iter == this->users.end())
             {
                 reply = new Message(Error);
-                reply->setErrorMessage("Username does not exist!");
+                reply->set_error_message("Username does not exist!");
                 this->log("Username " + username + " does not exist!");
             }
-            else if (!iter->second.isCorrectPassword(password))
+            else if (!iter->second.is_correct_password(password))
             {
                 reply = new Message(Error);
-                reply->setErrorMessage("Invalid password!");
+                reply->set_error_message("Invalid password!");
                 this->log("Invalid password for " + username + "!");
             }
             else
@@ -178,9 +178,7 @@ void MainWindow::serve()
         }
         break;
         default:
-            reply = new Message(Error);
-            reply->setErrorMessage("Invalid message type!");
-            this->log("Received invalid message type!");
+            this->log("Received unexpected message type!");
         }
         this->users_mutex.unlock();
         this->socket->send(*reply, user_ip.c_str(), user_port);
@@ -196,7 +194,7 @@ void MainWindow::read_users()
     while(getline(users_file, line))
     {
         User user = User(line);
-        if (!this->users.insert(make_pair(user.getUsername(), user)).second)
+        if (!this->users.insert(make_pair(user.get_username(), user)).second)
         {
             throw std::runtime_error("Repeated username in users file!");
         }
@@ -224,7 +222,7 @@ void MainWindow::on_start_push_button_clicked()
     this->set_start_widgets_visibility(false);
     this->set_logs_widgets_visibility(true);
     this->set_exit_widgets_visibility(true);
-    this->serving_thread = std::async(std::launch::async, &MainWindow::serve, this);
+    this->listening_thread = std::async(std::launch::async, &MainWindow::listen, this);
 }
 
 void MainWindow::on_exit_push_button_clicked()
@@ -232,5 +230,5 @@ void MainWindow::on_exit_push_button_clicked()
     this->set_exit_widgets_visibility(false);
     this->set_logs_widgets_visibility(false);
     this->save_users();
-    throw runtime_error("Exitting! This is not an error :P");
+    exit(0);
 }
