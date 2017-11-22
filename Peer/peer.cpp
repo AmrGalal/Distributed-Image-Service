@@ -285,11 +285,11 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
         case ImageChunk:
         {
             this->buffer_mutex.lock();
-            
+            std::string ip_and_port_concat=std::string(inet_ntoa(address.sin_addr))+'*'+std::string(ntohs(address.sin_port));
             const auto key = make_pair(
-                                       std::string(inet_ntoa(address.sin_addr)), message.get_image_id());
-            
-            if(image_buffer2.find(make_pair(key)) == image_buffer2.end())
+                                       ip_and_port_concat, message.get_image_id());
+     //LOL
+            if(image_buffer2.find(key) == image_buffer2.end())
             {
                 time_t time2;  time2=time(0);
                 image_buffer2.insert(
@@ -312,7 +312,7 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
                 cout<<"size 2bl delete"<<image_buffer2.size()<<endl;
                 
                 string_to_file("received_" + message.get_image_id(), image_data);
-                auto itr2=image_buffer2.find(make_pair(key));
+                auto itr2=image_buffer2.find(key);
                 image_buffer2.erase(itr2);
                 cout<<"size after delete"<<image_buffer2.size()<<endl;
                 
@@ -343,6 +343,8 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
 
 void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pair<time_t,  map<int32_t,Message> > > &image_buffer2){
     while(1){
+        usleep(5000);
+
         cout << "Worker thread waiting for the lock \n";
         buffer_mutex.lock();
         cout << "Worker thread got the lock \n";
@@ -354,38 +356,43 @@ void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pai
             //cout<<"empty "<<cur_chunk_map.empty()<<"time"<<difftime(timer2,p.second.first)<<endl;
             cout<<"curr size"<<cur_chunk_map.size()<<"expected"<<cur_chunk_map.begin()->second.get_image_num_chunks()<<endl;
             cout<<"diff "<<difftime(timer2,p.second.first)<<endl;
-            if(cur_chunk_map.size() == cur_chunk_map.begin()->second.get_image_num_chunks())
-                exit(0);
+           
             string curr_ip_address=p.first.first;
             string curr_image_id=p.first.second;
             
             if(difftime(timer2,p.second.first)>=0)
                 cout<<"greater than 0 \n";
+            
             if (difftime(timer2,p.second.first)>=30 &&!cur_chunk_map.empty() &&
                 cur_chunk_map.size()<cur_chunk_map.begin()->second.get_image_num_chunks())
             {
+                //image_buffer2.find(make_pair(curr_ip_address, curr_image_id))->second.second.size()<<endl
+                auto itr2=image_buffer2.find(make_pair(curr_ip_address, curr_image_id));
+                image_buffer2.erase(itr2);
+
                 //delete this entry
                 //>=5
                 cout <<"I am not expected to be here!";
             }
-            else if( (difftime(timer2,p.second.first)) >=0 && (!cur_chunk_map.empty())
+            else if( (difftime(timer2,p.second.first)) >=5 && (!cur_chunk_map.empty())
                     && (cur_chunk_map.size()<cur_chunk_map.begin()->second.get_image_num_chunks()) ){
                 
                 //ask for re-send
                 for(int i=0;i<cur_chunk_map.begin()->second.get_image_num_chunks();i++)
                 {
                     cout << "In the CheckImage thread iteration of i = " << i << "from " << cur_chunk_map.begin()->second.get_image_num_chunks() << endl;
+                    cout<<"MISSING PACKETS OCCURRING \n";
                     if(! cur_chunk_map.count(i)){
                         //ask for this packet
                         Message requestChunk(oneChunkRequested);
                         requestChunk.set_image_id(p.first.second);
                         requestChunk.set_image_chunk_index(i);
-                        string currentIp=p.first.first;
+                        std::string currentIp=p.first.first;
                         //image_buffer2[]
                         sockaddr_in v;
                         buffer_mutex.unlock();
                         //serve(make_pair(requestChunk,v));
-                        send_one_image_chunk( requestChunk.get_image_id(),currentIp, 8085, requestChunk.get_image_chunk_index());
+                        send_one_image_chunk( requestChunk.get_image_id(),currentIp.substr(0,currentIp.find(*)), currentIp.substr((currentIp.find(*)+1)), requestChunk.get_image_chunk_index());
                         
                         buffer_mutex.lock();
                         // requestChunk.marshal();
@@ -404,12 +411,12 @@ void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pai
                     {
                         image_data_str += image_buffer2.find(make_pair(curr_ip_address, curr_image_id))->second.second[i].get_image_chunk_content();
                     }
-                    cout<<"size 2bl delete"<<image_buffer2.size()<<endl;
+                   // cout<<"size 2bl delete"<<image_buffer2.size()<<endl;
                     
                     string_to_file("received_" + p.first.second, image_data_str);
                     //                        auto itr2=image_buffer2.find(make_pair(p,idd));
                     //                        image_buffer2.erase(itr2);
-                    cout<<"size after delete"<<image_buffer2.size()<<endl;
+                    cout<<"IMAGE SAVED SUCCESSFULLY"<<endl;
                 }
             }   
         }
@@ -423,6 +430,7 @@ void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pai
 
 void Peer::listen()
 {
+    auto handle = std::async(std::launch::async,checkImagePackets, ref(image_buffer2));
     while(true)
     {
         // auto serving_thread = async(launch::async, &Peer::serve, this, this->socket->receive());
