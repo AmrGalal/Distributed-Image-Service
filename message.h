@@ -16,6 +16,8 @@ enum RPCId : int32_t {
     SignOutRequest,
     // Generic Error!
     Error,
+    oneChunkRequested,
+
     // Image
     ImageChunk
 };
@@ -58,6 +60,7 @@ public:
     // Message();
     Message (RPCId _rpc_id);
     Message (const char * _marshalled_message);
+    Message(){}
     string marshal () const;
     ~Message ();
     // Setters
