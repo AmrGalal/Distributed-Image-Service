@@ -18,8 +18,12 @@
 #include "peer.h"
 #include "ui_peer.h"
 #include "../message.h"
+#include <QPixmap>
+#include <QFile>
+#include <QTextStream>
 //using namespace  std;
 // Construction!
+const std::string Peer::IMAGES_RECEIVED_FILE_NAME = "receivedImages.txt";
 Peer::Peer(QWidget *parent) :
 QMainWindow(parent),
 ui(new Ui::Peer)
@@ -29,6 +33,22 @@ ui(new Ui::Peer)
     this->set_sign_in_widgets_visibility(false);
     this->set_sign_out_widgets_visibility(false);
     // this->set_send_widgets_visibility(false);
+
+    QString path = IMAGES_RECEIVED_FILE_NAME;
+    QFile inputFile(path);
+
+    if(inputFile.open(QIODevice::ReadOnly)){
+        QTextStream in(&inputFile);
+        while(!in.atEnd()){
+            QString line= in.readLine();
+            ui->images_list_widget->addItem(line);
+        }
+        inputFile.close();
+    }
+    else{
+        std::cout<<"error in opening the file to read from it"<<std::endl;
+    }
+
 }
 
 Peer::~Peer()
@@ -242,6 +262,21 @@ void Peer::string_to_file(const std::string & _file_path, const std::string & _f
     output_file.close();
 }
 
+void Peer::save_image_name_DB(string img_Name) //save to file every 1 min
+{
+
+    std::ofstream users_file;
+    users_file.open(IMAGES_RECEIVED_FILE_NAME);
+   // this->users_mutex.lock();
+
+        users_file <<img_Name << endl;
+
+    users_file.close();
+   // this->log("Successfully saved " + std::to_string(this->users.size())  + " users information to file!");
+    //this->users_mutex.unlock();
+
+    }
+
 void Peer::chunk_and_send_image(const std::string _image_id, const std::string _receiver_ip, const int _receiver_port) {
     const std::string image_data = Peer::file_to_string(_image_id);
     const int num_chunks = image_data.length() / Peer::MAX_IMAGE_CHUNK_SIZE
@@ -275,16 +310,11 @@ void  Peer::send_one_image_chunk(const std::string _image_id, const std::string 
     
 }
 void  Peer::send_one_image_chunk_request(const std::string _image_id, const std::string _receiver_ip, const int _receiver_port, int _chunck_index_to_send) {
-//    const std::string image_data =  file_to_string(_image_id);
-//    const int num_chunks = image_data.length() /  MAX_IMAGE_CHUNK_SIZE
-//    + bool(image_data.length() %  MAX_IMAGE_CHUNK_SIZE);
-//    std::vector<Message> ans;
+
     Message image_chunk(oneChunkRequested);
     image_chunk.set_image_id(_image_id);
     image_chunk.set_image_chunk_index(_chunck_index_to_send);
-//    image_chunk.set_image_num_chunks(num_chunks);
-//    image_chunk.set_image_chunk_content(image_data.substr(_chunck_index_to_send *  MAX_IMAGE_CHUNK_SIZE,  MAX_IMAGE_CHUNK_SIZE));
-    this->socket->send(image_chunk, _receiver_ip.c_str(), _receiver_port);
+   this->socket->send(image_chunk, _receiver_ip.c_str(), _receiver_port);
 
 }
 //receives & saves if complete receival happend
@@ -301,7 +331,7 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
             std::string ip_and_port_concat=std::string(inet_ntoa(address.sin_addr))+std::string("*")+std::string(to_string(ntohs(address.sin_port)));
             const auto key = make_pair(
                                        ip_and_port_concat, message.get_image_id());
-     //LOL
+
             if(image_buffer2.find(key) == image_buffer2.end())
             {
                 time_t time2;  time2=time(0);
@@ -325,6 +355,7 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
                 std::cout<<"size 2bl delete"<<image_buffer2.size()<<std::endl;
                 
                 string_to_file("received_" + message.get_image_id(), image_data);
+                save_image_name_DB( ( "received_" + message.get_image_id() ) );
                 auto itr2=image_buffer2.find(key);
                 image_buffer2.erase(itr2);
                 std::cout<<"size after delete"<<image_buffer2.size()<<std::endl;
@@ -344,10 +375,7 @@ void Peer::serve(std::pair<Message, sockaddr_in> _received)
 
         std::string currentIp=std::string(inet_ntoa(address.sin_addr));
         int stupidPortN=ntohs(address.sin_port);
-      //  cout << "Port number receiving " << stupidPortN << std::endl;
-        //image_buffer2[]
 
-        //serve(make_pair(requestChunk,v));
         send_one_image_chunk( message.get_image_id(),
                               currentIp,
                               stupidPortN, message.get_image_chunk_index());
@@ -438,8 +466,11 @@ void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pai
                    // std::cout<<"size 2bl delete"<<image_buffer2.size()<<endl;
                     
                     string_to_file("received_" + p.first.second, image_data_str);
-                    //                        auto itr2=image_buffer2.find(make_pair(p,idd));
-                    //                        image_buffer2.erase(itr2);
+                                            auto itr2=image_buffer2.find(make_pair(curr_ip_address, curr_image_id));
+                                            image_buffer2.erase(itr2);
+
+                    save_image_name_DB( ( "received_" + curr_image_id ) );
+
                     std::cout<<"IMAGE SAVED SUCCESSFULLY"<<std::endl;
                 }
             }
@@ -455,8 +486,11 @@ void Peer:: checkImagePackets(map< std::pair<std::string,std::string> , std::pai
                // cout<<"size 2bl delete"<<image_buffer2.size()<<endl;
 
                 string_to_file("received_" + p.first.second, image_data_str);
-                //                        auto itr2=image_buffer2.find(make_pair(p,idd));
-                //                        image_buffer2.erase(itr2);
+                                        auto itr2=image_buffer2.find(make_pair(curr_ip_address, curr_image_id));
+                                        image_buffer2.erase(itr2);
+
+                save_image_name_DB( ( "received_" + curr_image_id) );
+
                 std::cout<<"IMAGE SAVED SUCCESSFULLY"<<std::endl;
 
 
@@ -485,4 +519,21 @@ void Peer::on_send_push_button_clicked()
     this->chunk_and_send_image(get_string_from_line_edit(ui->image_id_line_edit),
                                get_string_from_line_edit(ui->receiver_ip_line_edit),
                                atoi(get_string_from_line_edit(ui->receiver_port_line_edit).c_str()));
+}
+
+void Peer::on_show_image_push_button_clicked()
+{
+    QListWidgetItem *item = ui->images_list_widget->currentItem();
+    QString image_name = item->text();
+
+    QString path = image_name;
+    QPixmap myPixmap;
+
+    if(!myPixmap.load(path)){
+        qWarning("failed to load");
+    }
+    int w = ui->image_label->width();
+    int h = ui->image_label->height();
+    ui->image_label->setPixmap(myPixmap.scaled(w,h,Qt::KeepAspectRatio));
+
 }

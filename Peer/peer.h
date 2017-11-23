@@ -37,8 +37,12 @@ private slots:
 
     void on_send_push_button_clicked();
 
+    void on_show_image_push_button_clicked();
+
 private:
     // Visibility!
+    const static std::string IMAGES_RECEIVED_FILE_NAME;
+    void save_image_name_DB(string img_Name);
     void set_widgets_visibility(const std::vector<QWidget*> _widgets, const bool _visibility);
     void set_bind_widgets_visibility(const bool _visibility);
     void set_sign_in_widgets_visibility(const bool _visibility);
