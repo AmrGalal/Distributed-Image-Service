@@ -50,6 +50,7 @@ private:
     void save_users();
     void read_users();
     std::future<void> listening_thread;
+    std::future<void> saving_user_DB;
     std::map<std::string, User> users;
     std::mutex users_mutex;
 

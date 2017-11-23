@@ -74,6 +74,11 @@ string Message::marshal () const
             Message::serialize_int(this->get_image_num_chunks()) +
             Message::prepend_length(this->get_image_chunk_content());
             break;
+    case oneChunkRequested:
+        ans = ans +
+        Message::prepend_length(this->get_image_id()) +
+        Message::serialize_int(this->get_image_chunk_index());
+        break;
         default:
             throw std::runtime_error("RPCId not supported for marshalling!");
     }

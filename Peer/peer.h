@@ -55,6 +55,8 @@ private:
     static void string_to_file(const std::string & _file_path, const std::string & _file_content);
     void chunk_and_send_image(const std::string _image_id, const std::string _receiver_ip, const int _receiver_port);
     void  send_one_image_chunk(const std::string _image_id, const std::string _receiver_ip, const int _receiver_port, int _chunck_index_to_send);
+    void  send_one_image_chunk_request(const std::string _image_id, const std::string _receiver_ip, const int _receiver_port, int _chunck_index_to_send);
+
     void checkImagePackets(map< std::pair<std::string,std::string> , std::pair<time_t,  map<int32_t,Message> > > &image_buffer2);
     void send_image(const std::string & _image_id);
 

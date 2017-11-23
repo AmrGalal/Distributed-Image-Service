@@ -7,8 +7,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
+#include "user.h"
 #include <QMessageBox>
+
+#include <unistd.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -203,8 +205,10 @@ void MainWindow::read_users()
     this->log("Successfully read " + std::to_string(this->users.size())  + " users information from file!");
 }
 
-void MainWindow::save_users()
+void MainWindow::save_users() //save to file every 1 min
 {
+    while(1){
+        usleep((1000000*60));
     std::ofstream users_file;
     users_file.open(MainWindow::USERS_FILE_NAME);
     this->users_mutex.lock();
@@ -216,6 +220,7 @@ void MainWindow::save_users()
     this->log("Successfully saved " + std::to_string(this->users.size())  + " users information to file!");
     this->users_mutex.unlock();
 }
+    }
 
 void MainWindow::on_start_push_button_clicked()
 {
@@ -223,12 +228,14 @@ void MainWindow::on_start_push_button_clicked()
     this->set_logs_widgets_visibility(true);
     this->set_exit_widgets_visibility(true);
     this->listening_thread = std::async(std::launch::async, &MainWindow::listen, this);
+    //save_users()
+           this->saving_user_DB=  std::async(std::launch::async, &MainWindow::save_users, this);
 }
 
 void MainWindow::on_exit_push_button_clicked()
 {
     this->set_exit_widgets_visibility(false);
     this->set_logs_widgets_visibility(false);
-    this->save_users();
+   // this->save_users();
     exit(0);
 }
